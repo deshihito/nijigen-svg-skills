@@ -22,10 +22,13 @@ Simplification rules:
   [N] clumps total), absolutely no individual hair strands, no thin lines
   inside the hair, no stray flyaway hairs.
 - One single thick highlight band on the hair. No streak highlights.
-- Coloring grammar: cel shading with exactly ONE flat shadow tone per
-  area. Shadows are sharp designed shapes that follow the form -
+- Coloring grammar: NO shadow tones by default - one single flat tone
+  per area, form carried by the lines. Add a shadow only where its
+  shape itself carries information (under the chin, the inner mass of
+  the hair), as one sharp designed shape that follows the form -
   crescent cuts and angular wedges with clean edges, never soft blobs.
-  Highlights are flat graphic shapes too.
+- Blush is drawn as diagonal hatch strokes on the cheeks, never as
+  solid shapes or soft smudges.
 - Strong consistent outline linework defines every boundary; flat color
   only fills inside the lines.
 - BOUNDARY RULE: every region is a closed shape enclosed by the outline;

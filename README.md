@@ -68,6 +68,12 @@ AI生成イラスト（二次元絵）を、編集可能なSVGへ変換するた
 ![before](ai-image-to-svg/examples/cel-before.jpg)
 ![after](ai-image-to-svg/examples/cel-after.jpg)
 
+**PNG納品＋陰影の後付け＋背景削除（デフォルト）**（フラットで構造を
+確定させてから陰影だけを別パスで足し、最後に背景を抜いて透過で納品）
+
+![before](ai-image-to-svg/examples/disco-before.jpg)
+![after](ai-image-to-svg/examples/disco-after.png)
+
 ## 実測データ（2026-11-27、VTracer同一設定）
 
 概念の裏付けとなった測定値。対象の選定ではなく記録として残す。
