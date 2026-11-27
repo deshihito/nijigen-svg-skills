@@ -2,71 +2,72 @@
 
 元絵を添付し、`[...]` を対象に合わせて埋めて使う。英語のままが安定する。
 
+設計原理（SKILL.md の概念に対応）：
+
+- 保持したい性質は**漏れなく列挙**する。書かなかった性質は様式の標準形で
+  埋まる（概念1）。
+- 拘束は**測定できる単位**で書く：個数、割合、階調数、色の関係（概念1・4）。
+- 様式カテゴリは意図して選ぶ。簡略化を強めるほど別カテゴリへ滑る
+  （概念1）。本人性が階調や内部線に宿る絵では、そこを消す指定をしない
+  （概念2）。
+
 ```text
 Redraw this exact image as a clean flat vector illustration, as if it were
 traced and rebuilt as an SVG illustration by a human designer.
-Keep the same composition and identity: [保持する特徴を列挙。例: silver-grey
-bob hair, bright pink spiral eyes, small fang smile, black choker with buckle,
-hand touching the chin, vivid flat pink background].
+Keep the same composition and identity: [保持する特徴を列挙。部品だけでなく、
+目の開き具合・表情の癖・構図の切り方など、保持したい性質をすべて書く]
 
 Simplification rules:
-- Hair is a few large smooth clumps with clean curved outlines (about 7 clumps
-  total), absolutely no individual hair strands, no thin lines inside the hair,
-  no stray flyaway hairs.
+- Hair is a few large smooth clumps with clean curved outlines (about
+  [N] clumps total), absolutely no individual hair strands, no thin lines
+  inside the hair, no stray flyaway hairs.
 - One single thick highlight band on the hair. No streak highlights.
-- Flat colors only, with at most one flat shadow tone per area.
-- Bold clean outlines. No gradients, no glow effects, no sparkles (or at most
-  [N] large flat decorative shapes), no sketchy hatching, no texture,
-  no watermark text.
-- The nose is a single tiny dot in a muted skin-shadow color (low saturation,
-  NOT pink, NOT red). Do not omit it.
-- Eyes: keep the original openness - about [85]% of the iris visible
-  [半開きなら 70% 前後]. Do not round the eyes, do not open them wider,
-  do not make them half-closed slits either.
-- Expression: keep [表情の癖。例: smug half-lidded gaze, asymmetric smirk].
-  Do not normalize it into a generic cute smile.
-- Composition: keep the original framing exactly. [髪などがフレーム端で
-  切れている場合: the hair is cropped by the top and side edges of the frame;
-  do not pull the whole head into the frame, do not add margins.]
-- Face parts (nose, mouth lines, blush) are drawn BOLD and clearly visible,
-  never pale or subtle - they must survive a vector trace.
-- Skin is a clearly warm tone, visibly warmer and deeper than any white or
-  pale hair next to it, so the two never merge into one color.
+- Flat colors, with at most [階調数] stepped flat tones per area.
+- Bold clean outlines. No gradients, no glow effects, no texture,
+  no watermark text. Decorative motifs: at most [N] large flat shapes.
+- Small essential face parts (nose, mouth) are present and drawn BOLD and
+  clearly visible, never pale or subtle - they must survive a vector trace.
+  [例: the nose is a single tiny dot in a muted skin-shadow color,
+  low saturation]
+- Eyes: about [N]% of the iris visible. Do not round the eyes, do not
+  open them wider, do not narrow them to slits.
+- Expression: keep [表情の癖を文章で]. Do not normalize it into a generic
+  expression.
+- Composition: keep the original framing exactly. [フレーム端で切れている
+  要素がある場合: elements cropped by the frame edges stay cropped;
+  do not pull the whole subject into the frame, do not add margins.]
+- Adjacent parts that must stay separate are clearly separated in value:
+  [例: skin is visibly warmer and deeper than the pale hair next to it,
+  so the two never merge into one color.]
 - Every shape should look like a smooth vector path with few anchor points.
 - Clean and readable even at small icon size.
 ```
 
-## 抽象度と階調の指定（部位ごと）
+## 部位ごとの配分
 
-一律の簡略化ではなく、部位ごとにダイヤルを指定する：
+一律ではなく、部位ごとに予算を変える（概念4）。書き方の例：
 
-- 抽象度・中（既定）：`MEDIUM abstraction, up to 4 stepped flat tones per area`
-- 抽象度・強（アイコン用途）：`up to 2-3 tones, fewer clumps (about 5)`
-- 階調モード（濃淡が主題の絵）：部位ごとに階調数を書く
-  `hair in 4 stepped tones, skin in 3, the bubble interior in 8 stepped tones;
-  overlapping transparent areas are drawn as solid stained-glass panels of
-  real color, never as transparency`
-- 本人性の核（目など）だけ高予算にする：`the eyes keep full detail:
-  iris in 3 tones, dark pupil, two highlights` を目だけに付ける
+- 本人性の核だけ高予算：`the eyes keep full detail: iris in 3 tones,
+  dark pupil, two highlights`（目だけに付ける）
+- 濃淡が情報を持つ部位：部位ごとに階調数を書く
+  `hair in 4 stepped tones, skin in 3, the interior scene in 8 stepped
+  tones; overlapping transparent areas are drawn as solid panels of real
+  color, never as transparency`
+- 参照の仕方を部位で分ける（修正生成時）：
+  `Keep [コピーさせる部位] exactly as they are. Only redraw [部位]:
+  for it do NOT copy the interior details of the source; reference only
+  its outer silhouette and its color.`
 
-## 部位ごとに参照モードを変える場合（2回目以降の修正生成）
+## ずれたときの直し方（概念への対応で考える）
 
-保持したい部位と簡略化したい部位が混在するときは、編集として部位別に書く：
-
-```text
-Edit this image with per-part reference rules.
-Keep [顔・目・アクセサリ] exactly as they are.
-Only redraw [髪]: for the hair do NOT copy the interior details of the source;
-reference only its outer silhouette and its color. [予算指定を続ける]
-```
-
-## 調整の指針
-
-- 髪の線が残る → 房の数の上限を下げる、「no lines inside the clumps」を先頭に置く
-- 本人性が崩れる → 保持リストに崩れた特徴を明示して追加する（最大でも数個まで）
-- 装飾が残る → 「sparkles」ではなく形（star shapes）で数えて上限を付ける
-- 目が全開／細目に振れる → 形容詞をやめ、虹彩の露出％で指定し直す
-- 表情が無難になる → 表情の癖（視線・笑いの形）を保持リストに文章で入れる
-- 全体が画面に収まる → 「フレーム端で切れたまま、余白を作るな」と構図を明示する
-- 色が薄すぎ／濃すぎ → 再生成しない。トレース後にSVGの fill を目標RGBへ置換する
-- 鼻・口がトレースで消えた → 再生成しない。SVG側に実測座標で部品として足す
+- 何かが標準形に寄った（目・表情・構図・色）→ その性質が未指定だった
+  ということ。保持リストに測定できる形で追加する（概念1）。
+- ディテールが残る → 形容詞ではなく、数（房・モチーフ・階調）の上限を
+  下げて縛る（概念1・3）。
+- 色の着地点がずれた → 生成で直さない。トレース後に fill を目標RGBへ
+  置換する（概念7）。部位単独ではなく隣接部位との関係で目標を決める
+  （概念5）。
+- 小パーツがトレースで消えた → 生成で直さない。SVG側に実測座標で
+  足す（概念5・7）。
+- 文字が崩れた → 文字はパス化しない。内側を無地にしてトレースし、
+  `<text>` で置く（概念2・7）。
