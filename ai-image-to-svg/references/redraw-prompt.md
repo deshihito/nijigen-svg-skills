@@ -22,7 +22,14 @@ Simplification rules:
   [N] clumps total), absolutely no individual hair strands, no thin lines
   inside the hair, no stray flyaway hairs.
 - One single thick highlight band on the hair. No streak highlights.
-- Flat colors, with at most [階調数] stepped flat tones per area.
+- Coloring grammar: cel shading with exactly ONE flat shadow tone per
+  area. Shadows are sharp designed shapes that follow the form -
+  crescent cuts and angular wedges with clean edges, never soft blobs.
+  Highlights are flat graphic shapes too.
+- Strong consistent outline linework defines every boundary; flat color
+  only fills inside the lines.
+- Limited palette: few hues, with clear value separation between
+  neighboring parts so no two adjacent areas can merge.
 - Bold clean outlines. No gradients, no glow effects, no texture,
   no watermark text. Decorative motifs: at most [N] large flat shapes.
 - Small essential face parts (nose, mouth) are present and drawn BOLD and
@@ -49,7 +56,7 @@ Simplification rules:
 
 - 本人性の核だけ高予算：`the eyes keep full detail: iris in 3 tones,
   dark pupil, two highlights`（目だけに付ける）
-- 濃淡が情報を持つ部位：部位ごとに階調数を書く
+- 濃淡が情報を持つ部位だけ、文法の例外として階調数を書く（概念8）
   `hair in 4 stepped tones, skin in 3, the interior scene in 8 stepped
   tones; overlapping transparent areas are drawn as solid panels of real
   color, never as transparency`
@@ -57,6 +64,14 @@ Simplification rules:
   `Keep [コピーさせる部位] exactly as they are. Only redraw [部位]:
   for it do NOT copy the interior details of the source; reference only
   its outer silhouette and its color.`
+
+## 様式参照画像を使う場合
+
+目標の塗りを持つ絵を2枚目に添付し、`using the COLORING GRAMMAR of
+the second image` と指定すると、影の形・線の扱い・配色の文法（概念8）が
+言葉より正確に移る。文法の指定と予算の指定は別軸なので、参照画像を
+使っても予算（房の数など）は併記する。注意：参照画像からは内容
+（背景モチーフ、配色、小物）も漏れてくる。漏れが困る場合は使わない。
 
 ## ずれたときの直し方（概念への対応で考える）
 
