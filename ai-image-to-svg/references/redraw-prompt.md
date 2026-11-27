@@ -28,6 +28,12 @@ Simplification rules:
   Highlights are flat graphic shapes too.
 - Strong consistent outline linework defines every boundary; flat color
   only fills inside the lines.
+- BOUNDARY RULE: every region is a closed shape enclosed by the outline;
+  no two flat fills ever touch each other directly - an outline always
+  separates them. Silhouette details (a profile nose bump, lips) are
+  drawn as part of the outline line, never as bumps of a color fill.
+- Lighting is translated into normal local colors: skin is drawn in
+  normal skin tones, never tinted by colored ambient light in the scene.
 - Limited palette: few hues, with clear value separation between
   neighboring parts so no two adjacent areas can merge.
 - Bold clean outlines. No gradients, no glow effects, no texture,
@@ -100,7 +106,10 @@ the character.
   下げて縛る（概念1・3）。
 - 色の着地点がずれた → 生成で直さない。トレース後に fill を目標RGBへ
   置換する（概念7）。部位単独ではなく隣接部位との関係で目標を決める
-  （概念5）。
+  （概念5）。肌色のブレは参照と成果物の頬の中央値を実測し、ズレた
+  チャネルだけ寄せる。
+- 輪郭の凹凸（横顔の鼻など）がトレースで落ちた → 面の輪郭としてでは
+  なく、線として描き直す（境界の明示、概念8）。
 - 小パーツがトレースで消えた → 生成で直さない。SVG側に実測座標で
   足す（概念5・7）。
 - 文字が崩れた → 文字はパス化しない。内側を無地にしてトレースし、

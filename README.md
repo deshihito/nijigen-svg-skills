@@ -35,6 +35,39 @@ AI生成イラスト（二次元絵）を、編集可能なSVGへ変換するた
 コード側調整」。エージェント自身は描かず、分解・配分・指示・計測・
 判定を担う。
 
+## Before / After
+
+左が元絵、右が最終形SVGのレンダリング。数値はパス数 / サイズ。
+
+**slopなAI絵 → 描き直し＋トレース**（503パス/801KB → 104パス/167KB）
+
+![before](ai-image-to-svg/examples/cyber-before.jpg)
+![after](ai-image-to-svg/examples/cyber-after.jpg)
+
+**境界を線で明示した描き直し**（横顔の鼻が線として残り、復旧ゼロで
+302パス/330KB。明示しない版は復旧込みで約1,200パス/917KB）
+
+![before](ai-image-to-svg/examples/butterfly-before.jpg)
+![after](ai-image-to-svg/examples/butterfly-after.jpg)
+
+**実写写真 → ベクター似顔絵**（色距離が際どく固定設定では崩壊する
+ため、厳しい設定で再トレースして252パス/224KB）
+
+![before](ai-image-to-svg/examples/photo-before.jpg)
+![after](ai-image-to-svg/examples/photo-after.jpg)
+
+**文法で描かれた絵は描き直し不要**（直接トレース189パス/219KB、
+全パーツ生存）
+
+![before](ai-image-to-svg/examples/grammar-before.jpg)
+![after](ai-image-to-svg/examples/grammar-after.jpg)
+
+**古典セル画も直接トレース**（92パス。ただし同色レイヤーの氾濫だけ
+コード側で補修）
+
+![before](ai-image-to-svg/examples/cel-before.jpg)
+![after](ai-image-to-svg/examples/cel-after.jpg)
+
 ## 実測データ（2026-11-27、VTracer同一設定）
 
 概念の裏付けとなった測定値。対象の選定ではなく記録として残す。
@@ -63,6 +96,9 @@ AI生成イラスト（二次元絵）を、編集可能なSVGへ変換するた
 | 初期型の単純さ＋保持指定（軽さ優先） | 469パス / 928KB | **161パス / 271KB**（同題材で最軽量） |
 | 強い参照を丸ごと真似＋キー色背景（質優先） | 469パス / 928KB | 265パス / 465KB（顔の文法まで移るが描き込みが戻る） |
 | キー色背景で分離 | — | 背景が1つの色族として独立し、キーアウト合成で縁のフリンジなし |
+| 境界を線で明示した描き直し（横顔） | 285パス / 410KB | **302パス / 330KB**（復旧ゼロ。明示しない版は復旧込みで約1,200パス/917KB） |
+| 実写写真（暖色の近接色） | 183パス / 317KB | 252パス / 224KB（固定設定では42パスに崩壊、厳しい設定で再トレース） |
+| 古典セル画（直接トレース） | — | 92パス / 205KB（同色レイヤーの氾濫のみ補修） |
 
 ## スキル一覧
 
