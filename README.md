@@ -82,6 +82,14 @@ AI生成イラスト（二次元絵）を、編集可能なSVGへ変換するた
 ![after](ai-image-to-svg/examples/fox-after.jpg)
 ![stage2](ai-image-to-svg/examples/fox-stage2.jpg)
 
+**線幅の深度グレード**（左：フラットな描き直し／右：深度推定で線を
+3段階に分け、近い線を太く・遠い線を細くしたもの。下の拡大は手元で、
+上が処理前・下が処理後。指の線が太くなっている）
+
+![before](ai-image-to-svg/examples/grade-before.jpg)
+![after](ai-image-to-svg/examples/grade-after.jpg)
+![detail](ai-image-to-svg/examples/grade-detail.jpg)
+
 ## 実測データ（2026-11-27、VTracer同一設定）
 
 概念の裏付けとなった測定値。対象の選定ではなく記録として残す。
