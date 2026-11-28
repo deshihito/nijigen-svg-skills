@@ -1,8 +1,24 @@
 # 描き直しプロンプト テンプレート
 
 元絵を添付し、`[...]` を対象に合わせて埋めて使う。英語のままが安定する。
+このテンプレートはゼロショットで使う前提で、数値はすべて実測で
+較正済みの既定値である。迷ったら既定値のまま使う。
 
-設計原理（SKILL.md の概念に対応）：
+## 最重要の失敗様式：ピクセル合わせに逃げる
+
+指定が弱いと、モデルは「描き直し」ではなく**元のピクセル列の変換**
+として振る舞う：ブロック単位で色を塗り、参照元の画素に合わせようとする
+（ポスタリゼーション／モザイク化）。これはフィルタ処理であり、
+意味的な描き直しではない。形がブロック状に崩れ、線の論理も生まれない。
+
+対処は冒頭の枠組みで決まる：
+
+- 「この画像を変換せよ」ではなく「**この被写体を新規に描け**」と命じる。
+- ピクセル合わせ・ブロック化・ポスタリゼーションを**明示的に禁止**する。
+- 形はすべて「理解して描いた新しい形」であり、画素領域の単純化では
+  ない、と宣言する。
+
+## 設計原理（SKILL.md の概念に対応）
 
 - 保持したい性質は**漏れなく列挙**する。書かなかった性質は様式の標準形で
   埋まる（概念1）。
@@ -10,12 +26,43 @@
 - 様式カテゴリは意図して選ぶ。簡略化を強めるほど別カテゴリへ滑る
   （概念1）。本人性が階調や内部線に宿る絵では、そこを消す指定をしない
   （概念2）。
+- **非対称な特徴は見る側の左右で指定する**。どちらの目が開いているか、
+  アクセサリーがどちら側にあるか等は、指定しなければ生成が反転させる
+  ことがある（実測）。キャラの左右ではなく viewer's left / right で書く。
+- **原画に無い要素の発明を禁止する**。生成は影・歯・小物を勝手に足す
+  （実測：写真に無い斜めの影、原画に無い歯並び）。禁止を明記する。
+- **口の形は型で指定する**：開いているか閉じているか、歯が見えるか、
+  内側の色は何か。表情の癖の文章だけでは口の構造は固定できない。
+
+## 既定値（較正済み）
+
+| 項目 | 既定値 | 備考 |
+|---|---|---|
+| 顔パーツの線の太さ | 画像幅2000pxで約4px（＝他の顔の線と同じ太さ） | 8pxは太すぎて別の記号になる。「BOLD」とだけ書くと行き過ぎる |
+| 鼻（点タイプ） | 線画色の小さな点または雫形、顔幅の約2％以下 | 大きいと影・ほくろに読まれる |
+| 髪の房 | 約12房（ロングヘア）／約8房（ショート） | 房ごとに線で閉じる |
+| キー色 | 主題に無い色。既定はグリーン (0,255,0)。主題が緑系ならマゼンタ、ピンク髪ならグリーン | SKILL概念9 |
+| チーク | 斜線（ハッチング）数本、線画寄りのピンク | ベタ面はシール化する |
+| 影 | なし（部位ごとにベース1色） | 形が情報を運ぶ場所だけ1色（概念8） |
 
 ```text
-Redraw this exact image as a clean flat vector illustration, as if it were
-traced and rebuilt as an SVG illustration by a human designer.
-Keep the same composition and identity: [保持する特徴を列挙。部品だけでなく、
-目の開き具合・表情の癖・構図の切り方など、保持したい性質をすべて書く]
+Draw a NEW flat vector-style illustration of the subject in this image -
+a fresh drawing, not a conversion of the image. Do NOT posterize, do NOT
+match or block in the source pixels, do NOT mosaic: every shape is newly
+drawn from understanding the subject, with smooth clean curves.
+Keep the same composition, pose and identity: [保持する特徴を列挙。部品
+だけでなく、目の開き具合・表情の癖・構図の切り方など、保持したい性質を
+すべて書く]
+
+Arrangement, from the VIEWER'S perspective - copy it exactly, do not
+mirror it: [例: the eye on the viewer's LEFT is open with a purple iris
+and a white star pupil; the eye on the viewer's RIGHT is closed in a
+wink. アクセサリーの左右などもここに書く]
+Mouth: [型で書く。例: a small open smile with a PALE interior, NO teeth,
+NO dark mouth cavity / a closed smile line / an open mouth with an upper
+row of white teeth and a dark interior]
+Do NOT invent anything that is not in the original: no added shadows,
+no added teeth, no added accessories, no added motifs.
 
 Simplification rules:
 - Hair is a few large smooth clumps with clean curved outlines (about
@@ -27,8 +74,8 @@ Simplification rules:
   shape itself carries information (under the chin, the inner mass of
   the hair), as one sharp designed shape that follows the form -
   crescent cuts and angular wedges with clean edges, never soft blobs.
-- Blush is drawn as diagonal hatch strokes on the cheeks, never as
-  solid shapes or soft smudges.
+- Blush is drawn as a few diagonal hatch strokes on the cheeks, never
+  as solid shapes or soft smudges.
 - Strong consistent outline linework defines every boundary; flat color
   only fills inside the lines.
 - BOUNDARY RULE: every region is a closed shape enclosed by the outline;
@@ -41,10 +88,12 @@ Simplification rules:
   neighboring parts so no two adjacent areas can merge.
 - Bold clean outlines. No gradients, no glow effects, no texture,
   no watermark text. Decorative motifs: at most [N] large flat shapes.
-- Small essential face parts (nose, mouth) are present and drawn BOLD and
-  clearly visible, never pale or subtle - they must survive a vector trace.
-  [顔の扱いの例: the face is one single flat skin tone with no shadow on
-  the face; the nose is a single tiny dot in the dark outline color.
+- Small essential face parts (nose, mouth) are drawn at the SAME line
+  weight as the other face lines (about 4 pixels at 2000px image
+  width) - clearly visible, never pale or subtle, and never thicker
+  than the other lines: they must survive a vector trace.
+  [顔の扱いの例: the face is one single flat skin tone with no shadow
+  on the face; the nose is a single tiny dot in the dark outline color.
   影色で置く場合は彩度を落とす。点の大きさは顔幅の約2％が上限
   （概念8・手順5）]
 - Eyes: about [N]% of the iris visible. Do not round the eyes, do not
@@ -90,21 +139,31 @@ the second image` と指定すると、影の形・線の扱い・配色の文�
 
 ## 背景をキー色にする場合（概念9）
 
-主題と背景の分離が要る場合は、背景をキー色の単色で描かせる：
+主題と背景の分離が要る場合は、背景を主題に無い単一色で描かせる。
+既定はグリーン。主題が緑系を含むならマゼンタ、というように主題の
+色域から選ぶ：
 
 ```text
-BACKGROUND: completely plain solid chroma-key green (#00B140) edge to
-edge, no motifs, no gradient; the green must not appear anywhere on
-the character.
+BACKGROUND: completely plain solid [KEY COLOR] edge to edge, no
+motifs, no gradient; that color must not appear anywhere on the
+character.
 ```
 
-キー色は主題に含まれない色を選ぶ。背景モチーフは別レイヤーで用意し、
-キーアウト後に合成する。
+背景モチーフは別レイヤーで用意し、キーアウト後に合成する。
+キーイングは完全一致ではなく色の族で行う（生成ノイズで近傍色に
+割れるため）。
 
 ## ずれたときの直し方（概念への対応で考える）
 
+- ブロック状・モザイク状になった → ピクセル合わせに逃げている。
+  冒頭の枠組み（新規に描く／ポスタリゼーション禁止）を強めて再生成
+  する。解像度を上げても直らない。
 - 何かが標準形に寄った（目・表情・構図・色）→ その性質が未指定だった
   ということ。保持リストに測定できる形で追加する（概念1）。
+- 左右が反転した（目の開閉、アクセサリーの位置）→ 非対称特徴を
+  viewer's left / right で明記して再生成する。コードでは直せない。
+- 原画に無いものが足された（影・歯・小物）→ 発明の禁止を明記して
+  再生成する。口は型（開閉・歯の有無・内側の色）まで書く。
 - ディテールが残る → 形容詞ではなく、数（房・モチーフ・階調）の上限を
   下げて縛る（概念1・3）。
 - 色の着地点がずれた → 生成で直さない。トレース後に fill を目標RGBへ
